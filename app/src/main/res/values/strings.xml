@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Style Transfer App</string>
+
+    // default text content
+    <string name="gallery_img_name_default">No Title</string>
+    <string name="gallery_img_date_default">08.11.02</string>
 </resources>
