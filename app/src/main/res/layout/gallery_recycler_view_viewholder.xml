@@ -12,7 +12,8 @@
         <ImageView
             android:id="@+id/gallery_img"
             android:layout_width="match_parent"
-            android:layout_height="150dp"/>
+            android:layout_height="150dp"
+            android:contentDescription="@string/gallery_img_description"/>
 
         <TextView
             android:id="@+id/gallery_img_name"

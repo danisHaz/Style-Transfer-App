@@ -4,4 +4,5 @@
     // default text content
     <string name="gallery_img_name_default">No Title</string>
     <string name="gallery_img_date_default">08.11.02</string>
+    <string name="gallery_img_description">Your result of style transfer</string>
 </resources>
