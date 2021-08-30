@@ -1,14 +1,16 @@
 package com.example.styletransferapp.business.services
 
-import com.example.styletransferapp.business.domain.utils.ImageHolder
-import com.example.styletransferapp.business.services.network.WebService
+import com.example.styletransferapp.business.services.persistence.main.ImageHolder
+import com.example.styletransferapp.business.services.network.main.ImageWebService
+import com.example.styletransferapp.business.services.persistence.main.ImageDao
 import kotlinx.coroutines.flow.Flow
 
 interface AppRepository {
 
-    var webService: WebService
+    var imageWebService: ImageWebService
+    var imageDao: ImageDao
 
-    suspend fun getGallery(userId: Int): Flow<ImageHolder>
+    fun getGallery(userId: Int): Flow<ImageHolder>
     //-- actually this method sets constraint for strong
     // ordering of pictures in gallery
     suspend fun getImageByPosition(position: Int): ImageHolder

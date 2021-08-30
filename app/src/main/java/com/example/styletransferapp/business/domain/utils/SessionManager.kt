@@ -1,6 +1,7 @@
 package com.example.styletransferapp.business.domain.utils
 
 import androidx.lifecycle.MutableLiveData
+import com.example.styletransferapp.business.interactors.BaseUseCase
 
 class SessionManager private constructor() {
 
@@ -11,9 +12,11 @@ class SessionManager private constructor() {
     }
     val currentSessionState: MutableLiveData<Boolean>
         = MutableLiveData<Boolean>()
-    lateinit var sessionData: SessionData
+    private lateinit var sessionData: SessionData
+    val data: SessionData
+        get() = sessionData
 
-    data class SessionData(val userId: Int)
+    data class SessionData(val userId: Int) : BaseUseCase.RequestType
 
     fun handleSessionUpdate(state: SessionState) {
         when(state) {
