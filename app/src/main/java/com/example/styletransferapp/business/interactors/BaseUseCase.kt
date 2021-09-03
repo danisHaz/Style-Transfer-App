@@ -10,7 +10,7 @@ abstract class BaseUseCase<
 
     var requestData: Request? = null
 
-    abstract fun execute(): Flow<DataState>
+    abstract fun execute(data: Request? = null): Flow<DataState>
 
     interface RequestType
     interface ResponseType

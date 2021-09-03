@@ -1,4 +1,4 @@
-package com.example.styletransferapp.representation.main.prev_pictures_screen
+package com.example.styletransferapp.representation.main.prev_pictures_screen.views
 
 import android.media.Image
 import android.view.View
@@ -11,5 +11,6 @@ class GalleryRecyclerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVi
     val card: MaterialCardView = itemView.findViewById(R.id.card)
     val galleryImg: Image = itemView.findViewById(R.id.gallery_img)
     val galleryImgName: TextView = itemView.findViewById(R.id.gallery_img_name)
+    val galleryImgDescription: TextView = itemView.findViewById(R.id.gallery_img_description)
     val galleryImgDate: TextView = itemView.findViewById(R.id.gallery_img_date)
 }

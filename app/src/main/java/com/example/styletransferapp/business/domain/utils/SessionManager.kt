@@ -31,6 +31,7 @@ class SessionManager private constructor() {
 
     fun logout(state: SessionState.Logout) {
         // TODO: remove ui observers on currentSessionState
+        // TODO: clear all resources as repository, cache(!)...
         currentSessionState.value = false
     }
 

@@ -3,6 +3,7 @@ package com.example.styletransferapp.di
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.services.AppRepository
 import com.example.styletransferapp.business.services.AppRepositoryImpl
 import com.example.styletransferapp.business.services.persistence.AppDatabase
@@ -17,7 +18,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-//    provide db, dao, dto, etc.
 
     @Singleton
     @Provides
@@ -35,4 +35,9 @@ object AppModule {
     @Provides
     fun provideImageDao(appDatabase: AppDatabase): ImageDao
         = appDatabase.getImageDao()
+
+    @Singleton
+    @Provides
+    fun provideSessionManager(): SessionManager
+        = SessionManager.manager
 }
