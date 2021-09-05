@@ -18,6 +18,9 @@ abstract class ImageDao {
     @Query("DELETE FROM image_table WHERE imageId = :id")
     abstract suspend fun removeFromGallery(id: Int)
 
+    @Query("DELETE FROM image_table")
+    abstract suspend fun clearCache()
+
     suspend fun updateCache(imageList: List<ImageDataHolder>) {
         imageList.forEach {
             addToGalleryOrReplace(it)

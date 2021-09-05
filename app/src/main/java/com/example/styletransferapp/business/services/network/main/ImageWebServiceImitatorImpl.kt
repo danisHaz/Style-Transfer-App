@@ -10,6 +10,8 @@ class ImageWebServiceImitatorImpl : ImageWebService {
     private val remoteGallery: MutableList<ImageDataHolder>
         = mutableListOf()
 
+    //-- TODO: initialize this implementation by fake images from random websites
+
     override suspend fun addToGalleryOrReplace(userId: Int, imageDataHolder: ImageDataHolder)
         = run breaker@ {
             var contains = false

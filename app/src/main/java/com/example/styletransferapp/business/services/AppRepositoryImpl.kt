@@ -54,4 +54,8 @@ class AppRepositoryImpl : AppRepository {
 
         imageDao.removeFromGallery(imageHolder.imageId)
     }
+
+    override suspend fun clearCache(userId: Int) {
+        imageDao.clearCache()
+    }
 }

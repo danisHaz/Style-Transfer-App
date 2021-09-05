@@ -16,5 +16,7 @@ interface AppRepository {
 
     suspend fun addToGalleryOrReplace(userId: Int, imageHolder: ImageDataHolder)
 
+    suspend fun clearCache(userId: Int)
+
     suspend fun removeFromGallery(userId: Int, imageHolder: ImageDataHolder, onlyFromCache: Boolean)
 }
