@@ -13,8 +13,8 @@ import javax.inject.Inject
 class UpdateGalleryEvent
 @Inject
 constructor(
-    private val repo: AppRepository,
     private val sessionManager: SessionManager,
+    private val repo: AppRepository,
 ) : BaseUseCase<ImageType, BaseUseCase.ResponseType>() {
 
     companion object {

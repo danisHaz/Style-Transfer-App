@@ -7,10 +7,10 @@ import com.example.styletransferapp.business.domain.utils.ImageDataHolder
 abstract class ImageDao {
 
     @Query("SELECT * FROM image_table")
-    abstract suspend fun getGallery(): List<ImageDataHolder>
+    abstract suspend fun getGallery(): List<ImageHolderEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun addToGalleryOrReplace(holder: ImageDataHolder)
+    abstract suspend fun addToGalleryOrReplace(holder: ImageHolderEntity)
 
     @Query("SELECT COUNT(*) FROM image_table")
     abstract suspend fun getGallerySize(): Int
@@ -21,7 +21,7 @@ abstract class ImageDao {
     @Query("DELETE FROM image_table")
     abstract suspend fun clearCache()
 
-    suspend fun updateCache(imageList: List<ImageDataHolder>) {
+    suspend fun updateCache(imageList: List<ImageHolderEntity>) {
         imageList.forEach {
             addToGalleryOrReplace(it)
         }

@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
 abstract class BaseActivity : AppCompatActivity(), UiListener {
 
@@ -26,5 +27,13 @@ abstract class BaseActivity : AppCompatActivity(), UiListener {
             message ?: Constants.PLEASE_TRY_AGAIN_MESSAGE,
             if (message != null) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
         ).show()
+    }
+
+    override fun setKeyBoard() {
+        TODO("Not yet implemented")
+    }
+
+    override fun hideKeyBoard() {
+        TODO("Not yet implemented")
     }
 }

@@ -3,6 +3,7 @@ package com.example.styletransferapp.business.services
 import com.example.styletransferapp.business.domain.utils.ImageDataHolder
 import com.example.styletransferapp.business.services.network.main.ImageWebService
 import com.example.styletransferapp.business.services.persistence.main.ImageDao
+import com.example.styletransferapp.business.services.persistence.main.ImageHolderEntity
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,6 +18,15 @@ class AppRepositoryImpl : AppRepository {
 
     private var gallerySize: Int = 0
 
+    // TODO: remove this extension and add separated class as holder for ImageDataHolder List
+    private fun List<ImageDataHolder>.toImageHolderEntityList(): List<ImageHolderEntity> {
+        val imageHolderEntityList = mutableListOf<ImageHolderEntity>()
+        forEach {
+            imageHolderEntityList.add(it.toImageHolderEntity())
+        }
+        return imageHolderEntityList
+    }
+
     override fun getGallery(userId: Int): Flow<ImageDataHolder>
         = flow {
             var serverImages: List<ImageDataHolder>? = null
@@ -27,32 +37,35 @@ class AppRepositoryImpl : AppRepository {
                     ?.toImageHolderList()
 
             serverImages?.let {
-                imageDao.updateCache(it)
-                gallerySize = imageDao.getGallerySize()
+                imageDao.updateCache(
+                    it.toImageHolderEntityList()
+                )
+                gallerySize = it.size
             }
 
             imageDao.getGallery().forEach { imageHolder ->
-                emit(imageHolder)
+                emit(imageHolder.toImageHolder())
             }
         }
 
     override fun getGallerySize(userId: Int): Int
         = gallerySize
 
-    override suspend fun addToGalleryOrReplace(userId: Int, imageHolder: ImageDataHolder) {
-        imageWebService.addToGalleryOrReplace(userId, imageHolder)
-        imageDao.addToGalleryOrReplace(imageHolder)
-    }
-
     override suspend fun removeFromGallery(
         userId: Int,
-        imageHolder: ImageDataHolder,
+        imageDataHolder: ImageDataHolder,
         onlyFromCache: Boolean
     ) {
-        if (!onlyFromCache)
-            imageWebService.removeFromGalleryById(userId, imageHolder.imageId)
+        if (onlyFromCache) {
+            imageDao.removeFromGallery(imageDataHolder.imageId)
+            return
+        }
+        imageWebService.removeFromGalleryById(userId, imageDataHolder.imageId)
+    }
 
-        imageDao.removeFromGallery(imageHolder.imageId)
+    override suspend fun addToGalleryOrReplace(userId: Int, imageDataHolder: ImageDataHolder) {
+        imageWebService.addToGalleryOrReplace(userId, imageDataHolder)
+        imageDao.addToGalleryOrReplace(imageDataHolder.toImageHolderEntity())
     }
 
     override suspend fun clearCache(userId: Int) {

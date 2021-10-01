@@ -13,8 +13,8 @@ import javax.inject.Inject
 class GetImagesEvent
 @Inject
 constructor(
-    private val repo: AppRepository,
     private val sessionManager: SessionManager,
+    private val repo: AppRepository,
 ) : BaseUseCase<SessionManager.SessionData, ImageDataHolder>() {
     companion object {
         private const val ON_SUCCESS = "Successful loading from repository"
@@ -30,6 +30,6 @@ constructor(
             }
             emit(DataState.Success(ON_SUCCESS))
         }.catch { e ->
-            emit(DataState.Error("$ON_ERROR: $e"))
+            emit(DataState.Error("$ON_ERROR: ${e.message}"))
         }
 }

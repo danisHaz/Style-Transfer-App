@@ -9,24 +9,24 @@ import com.example.styletransferapp.business.interactors.UpdateGalleryEvent
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-import kotlin.coroutines.CoroutineContext
-
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @HiltViewModel
-class PrevPicturesViewModel(
-    private val sessionManager: SessionManager,
-    private val getImagesEvent: GetImagesEvent,
-    private val updateGalleryEvent: UpdateGalleryEvent,
-    private val coroutineContext: CoroutineContext,
-): ViewModel() {
+class PrevPicturesViewModel
+@Inject
+constructor(
+    val sessionManager: SessionManager,
+    val getImagesEvent: GetImagesEvent,
+    val updateGalleryEvent: UpdateGalleryEvent,
+) : ViewModel() {
 
     companion object {
         val NAME = this::class.java.name
@@ -35,7 +35,8 @@ class PrevPicturesViewModel(
     }
 
     val currentState: MutableLiveData<PrevPicturesState>
-        = MutableLiveData(PrevPicturesState.OnGalleryLoading)
+        = MutableLiveData()
+
     private suspend fun MutableLiveData<PrevPicturesState>.changeState(state: PrevPicturesState) {
         withContext(Dispatchers.Main) {
             this@changeState.value = state
@@ -48,7 +49,7 @@ class PrevPicturesViewModel(
 
     fun changeState(state: PrevPicturesState) {
         if (currentGallery == null)
-            currentGallery = mutableListOf();
+            currentGallery = mutableListOf()
 
         when (state) {
             is PrevPicturesState.OnGalleryLoading ->
@@ -68,7 +69,7 @@ class PrevPicturesViewModel(
     }
 
     private fun loadGallery() {
-        CoroutineScope(coroutineContext).launch {
+        viewModelScope.launch {
             getImagesEvent.execute().collect { imageDataHolder ->
                 when (imageDataHolder) {
                     is DataState.Error -> {
@@ -102,7 +103,7 @@ class PrevPicturesViewModel(
     }
 
     private fun updateGallery(state: UpdateGalleryEventState) {
-        CoroutineScope(coroutineContext).launch {
+        viewModelScope.launch {
             updateGalleryEvent.execute(state).collect { dataState ->
                 when (dataState) {
                     is DataState.Success -> {
