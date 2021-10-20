@@ -8,8 +8,8 @@ import com.example.styletransferapp.business.domain.utils.ImageDataHolder
 import com.example.styletransferapp.business.interactors.UpdateGalleryEvent
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.styletransferapp.representation.BaseViewModel
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 
@@ -26,7 +26,7 @@ constructor(
     val sessionManager: SessionManager,
     val getImagesEvent: GetImagesEvent,
     val updateGalleryEvent: UpdateGalleryEvent,
-) : ViewModel() {
+) : BaseViewModel<PrevPicturesState>() {
 
     companion object {
         val NAME = this::class.java.name
@@ -47,7 +47,7 @@ constructor(
     val gallery: MutableList<ImageDataHolder>?
         get() = currentGallery
 
-    fun changeState(state: PrevPicturesState) {
+    override fun changeState(state: PrevPicturesState) {
         if (currentGallery == null)
             currentGallery = mutableListOf()
 

@@ -3,6 +3,7 @@ package com.example.styletransferapp.di.main
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.interactors.ClearCacheAndSessionEvent
 import com.example.styletransferapp.business.interactors.GetImagesEvent
+import com.example.styletransferapp.business.interactors.LoginEvent
 import com.example.styletransferapp.business.interactors.UpdateGalleryEvent
 import com.example.styletransferapp.business.services.AppRepository
 import com.example.styletransferapp.representation.main.prev_pictures_screen.UpdateGalleryEventState
@@ -18,25 +19,25 @@ import kotlin.coroutines.CoroutineContext
 @InstallIn(ViewModelComponent::class)
 object MainModule {
 
-    @ViewModelScoped
     @Provides
     fun provideUpdateGalleryEvent(
         sessionManager: SessionManager,
         repo: AppRepository,
     ) = UpdateGalleryEvent(sessionManager, repo)
 
-    @ViewModelScoped
     @Provides
     fun provideClearCacheAndSessionEvent(
         sessionManager: SessionManager,
         repo: AppRepository,
     ) = ClearCacheAndSessionEvent(sessionManager, repo)
 
-    @ViewModelScoped
     @Provides
     fun provideGetImagesEvent(
         sessionManager: SessionManager,
         repo: AppRepository,
     ) = GetImagesEvent(sessionManager, repo)
 
+    @Provides
+    fun provideLoginEvent()
+        = LoginEvent()
 }

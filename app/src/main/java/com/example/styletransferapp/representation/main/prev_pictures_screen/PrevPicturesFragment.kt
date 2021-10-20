@@ -34,7 +34,7 @@ class PrevPicturesFragment : BaseFragment() {
 
     private val viewModel: PrevPicturesViewModel by viewModels()
 
-    private lateinit var parentActivity: MainActivity
+    private var parentActivity: MainActivity? = null
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var galleryManager:
@@ -74,9 +74,9 @@ class PrevPicturesFragment : BaseFragment() {
     private fun subscribeObservers(view: View) {
         viewModel.currentState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is PrevPicturesState.OnGalleryLoading -> parentActivity.setProgressBar()
+                is PrevPicturesState.OnGalleryLoading -> parentActivity?.setProgressBar()
                 is PrevPicturesState.OnGalleryLoadingError -> {
-                    parentActivity.setSnackbar(
+                    parentActivity?.setSnackbar(
                         view, state.message, null, null
                     )
                     swipeRefreshLayout.isRefreshing = false
@@ -100,6 +100,7 @@ class PrevPicturesFragment : BaseFragment() {
 
     override fun onDetach() {
         galleryManager.changeState(RecyclerViewState.OnDestroy)
+        parentActivity = null
         super.onDetach()
     }
 }

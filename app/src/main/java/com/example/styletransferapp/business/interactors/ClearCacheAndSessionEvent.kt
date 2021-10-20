@@ -25,7 +25,7 @@ constructor(
     override fun execute(data: RequestType?): Flow<DataState>
         = flow {
             emit(DataState.Loading)
-            repo.clearCache(sessionManager.data.userId)
+            repo.clearCache(sessionManager.data?.userId ?: throw java.lang.NullPointerException())
             emit(DataState.Success(ON_SUCCESS))
         }.catch { e ->
             emit(DataState.Error("$ON_ERROR: $e"))

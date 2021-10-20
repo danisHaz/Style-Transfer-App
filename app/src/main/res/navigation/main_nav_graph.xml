@@ -9,7 +9,7 @@
         android:id="@+id/fragment_prev_pictures"
         android:name
             ="com.example.styletransferapp.representation.main.prev_pictures_screen.PrevPicturesFragment"
-        android:label="Previous Pictures Fragment"
+        android:label="Previous pictures fragment"
         tools:layout="@layout/fragment_prev_pictures">
         <action
             android:id="@+id/action_fragment_prev_pictures_to"/>

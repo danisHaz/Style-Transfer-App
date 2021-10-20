@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/fragment_login"
+    android:id="@+id/auth_nav_graph">
+
+    <fragment
+        android:id="@+id/fragment_login"
+        android:name
+            ="com.example.styletransferapp.representation.auth.login_screen.login.LoginFragment"
+        android:label="Login fragment"
+        tools:layout="@layout/fragment_login">
+        <action/>
+    </fragment>
+
+</navigation>

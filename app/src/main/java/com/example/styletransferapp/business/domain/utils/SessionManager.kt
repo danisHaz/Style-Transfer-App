@@ -19,63 +19,67 @@ class SessionManager private constructor() {
         val manager: SessionManager by lazy {
             SessionManager()
         }
-        const val DEFAULT_USER_ID = -1
-        const val CACHE_CLEAR_ERROR = "Clear cache error"
+        const val CACHE_CLEAN_ERROR = "Clean cache error"
         val NAME = this::class.java.name
         const val INVALID_DATA_STATE = "Invalid data state provided"
     }
     private val coroutineScope: CoroutineScope = CoroutineScope(IO)
 
-    val currentSessionState: MutableLiveData<SessionState>
+    private val currentSessionState: MutableLiveData<SessionState>
         = MutableLiveData<SessionState>()
-    private lateinit var sessionData: SessionData
-    val data: SessionData
+    private var sessionData: SessionData? = null
+    val data: SessionData?
         get() = sessionData
 
     data class SessionData(val userId: Int) : BaseUseCase.RequestType
 
     fun handleSessionUpdate(state: SessionState) {
         when(state) {
-            is SessionState.Login -> {
+            is SessionState.LoggedIn -> {
                 login(state)
             }
             is SessionState.Logout -> {
                 logout(state)
             }
+            // actually nothing happens
+            is SessionState.LoggedOut -> {  }
         }
     }
 
-    fun logout(state: SessionState.Logout) {
+    private fun logout(state: SessionState.Logout) {
         // TODO: remove ui observers on currentSessionState
         // TODO: clear all resources as repository, cache(!)...
         coroutineScope.launch {
-            sessionData = SessionData(DEFAULT_USER_ID)
-            state.clearCacheAndSessionEvent.execute(null).collect { dataState ->
-                when (dataState) {
-                    is DataState.Loading -> {
-                        //-- Loading...
-                    }
-                    is DataState.Error -> {
-                        //-- tell observers to notify user about error
-                        Log.e(NAME, dataState.message ?: CACHE_CLEAR_ERROR)
-                    }
-                    is DataState.Success -> {
-                        //-- cool nice -> have fun guys
-                    }
-                    else -> {
-                        Log.w(NAME, INVALID_DATA_STATE)
+            state.clearCacheAndSessionEvent
+                .execute(null)
+                .collect { dataState ->
+                    when (dataState) {
+                        is DataState.Loading -> {
+                            //-- Loading...
+                        }
+                        is DataState.Error -> {
+                            //-- tell observers to notify user about error
+                            Log.e(NAME, dataState.message ?: CACHE_CLEAN_ERROR)
+                        }
+                        is DataState.Success -> {
+                            //-- cool nice -> have fun guys
+                        }
+                        else -> {
+                            Log.w(NAME, INVALID_DATA_STATE)
+                        }
                     }
                 }
-            }
+
+            sessionData = null
             withContext(Main) {
-                currentSessionState.value = state
+                currentSessionState.value = SessionState.LoggedOut
             }
         }
     }
 
-    fun login(state: SessionState.Login) {
+    private fun login(state: SessionState.LoggedIn) {
         // TODO: set ui observers on currentSessionState
-        sessionData = SessionData(state.userId)
+        sessionData = SessionData(state.userData.userId)
         currentSessionState.value = state
     }
 }
