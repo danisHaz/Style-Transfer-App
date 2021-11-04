@@ -72,7 +72,7 @@ class LoginFragment : BaseFragment() {
                     parentActivity?.setProgressBar()
                 }
                 is AuthState.OnRegister -> {
-                    // parentActivity?.setProgressBar()
+                     parentActivity?.setProgressBar()
                     // todo: transition to register screen
                 }
                 is AuthState.OnLoggedIn -> {

@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.interactors.GetImagesEvent
-import com.example.styletransferapp.business.domain.utils.ImageDataHolder
+import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 import com.example.styletransferapp.business.interactors.UpdateGalleryEvent
 
 import androidx.lifecycle.MutableLiveData

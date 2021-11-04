@@ -12,11 +12,16 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
 
 import dagger.hilt.android.scopes.ViewModelScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @ViewModelScoped
 class LoginViewModel
@@ -42,12 +47,21 @@ constructor(
     }
 
     override fun changeState(state: AuthState) {
+        _authState.value = state
         when (state) {
             is AuthState.OnLogin -> {
-                login(state)
+//                login(state)
+                CoroutineScope(IO).launch {
+                    delay(1000L)
+                    _authState.value = AuthState.OnLoggedIn
+                }
             }
             is AuthState.OnLogout -> {
-                logout()
+//                logout()
+                CoroutineScope(IO).launch {
+                    delay(1000L)
+                    _authState.value = AuthState.OnLoggedOut
+                }
             }
             is AuthState.OnRegister -> {
                 //-- should never be changed from changeState

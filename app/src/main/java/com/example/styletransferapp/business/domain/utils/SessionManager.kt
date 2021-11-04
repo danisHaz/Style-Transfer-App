@@ -49,32 +49,8 @@ class SessionManager private constructor() {
     private fun logout(state: SessionState.Logout) {
         // TODO: remove ui observers on currentSessionState
         // TODO: clear all resources as repository, cache(!)...
-        coroutineScope.launch {
-            state.clearCacheAndSessionEvent
-                .execute(null)
-                .collect { dataState ->
-                    when (dataState) {
-                        is DataState.Loading -> {
-                            //-- Loading...
-                        }
-                        is DataState.Error -> {
-                            //-- tell observers to notify user about error
-                            Log.e(NAME, dataState.message ?: CACHE_CLEAN_ERROR)
-                        }
-                        is DataState.Success -> {
-                            //-- cool nice -> have fun guys
-                        }
-                        else -> {
-                            Log.w(NAME, INVALID_DATA_STATE)
-                        }
-                    }
-                }
-
-            sessionData = null
-            withContext(Main) {
-                currentSessionState.value = SessionState.LoggedOut
-            }
-        }
+        sessionData = null
+        currentSessionState.value = SessionState.LoggedOut
     }
 
     private fun login(state: SessionState.LoggedIn) {

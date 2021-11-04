@@ -33,10 +33,10 @@ class AuthActivity : BaseActivity() {
     }
 
     override fun setProgressBar() {
-        TODO("Not yet implemented")
+        progressBar.visibility = ProgressBar.VISIBLE
     }
 
     override fun hideProgressbar() {
-        TODO("Not yet implemented")
+        progressBar.visibility = ProgressBar.INVISIBLE
     }
 }

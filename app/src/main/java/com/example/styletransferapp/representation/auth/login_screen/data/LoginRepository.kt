@@ -1,5 +1,6 @@
 package com.example.styletransferapp.representation.auth.login_screen.data
 
+import com.example.styletransferapp.business.domain.utils.Result
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.representation.auth.login_screen.data.model.LoginPassword
 

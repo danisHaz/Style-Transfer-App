@@ -3,7 +3,7 @@ package com.example.styletransferapp.business.services.persistence.main
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.styletransferapp.business.domain.utils.ImageDataHolder
+import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 
 @Entity(tableName="image_table")
 class ImageHolderEntity(

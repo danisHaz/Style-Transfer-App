@@ -29,6 +29,7 @@ class RecyclerViewManager<Adapter : RecyclerView.Adapter<VH>, VH : RecyclerView.
                 onRemove(state)
             }
             is RecyclerViewState.OnShow -> {}
+            is RecyclerViewState.OnHide -> {}
             is RecyclerViewState.OnDestroy -> onDestroy()
         }
     }

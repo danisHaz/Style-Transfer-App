@@ -74,7 +74,9 @@ class PrevPicturesFragment : BaseFragment() {
     private fun subscribeObservers(view: View) {
         viewModel.currentState.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is PrevPicturesState.OnGalleryLoading -> parentActivity?.setProgressBar()
+                is PrevPicturesState.OnGalleryLoading -> {
+                    parentActivity?.setProgressBar()
+                }
                 is PrevPicturesState.OnGalleryLoadingError -> {
                     parentActivity?.setSnackbar(
                         view, state.message, null, null

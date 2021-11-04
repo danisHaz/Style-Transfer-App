@@ -1,7 +1,6 @@
 package com.example.styletransferapp.representation.main.prev_pictures_screen.views
 
 import android.content.Context
-import android.media.Image
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.example.styletransferapp.R
-import com.example.styletransferapp.business.domain.utils.ImageDataHolder
+import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 import com.google.android.material.card.MaterialCardView
 
 class GalleryRecyclerViewHolder(

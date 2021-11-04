@@ -1,4 +1,4 @@
-package com.example.styletransferapp.business.domain.utils
+package com.example.styletransferapp.business.domain.utils.main
 
 import com.example.styletransferapp.business.interactors.BaseUseCase
 import com.example.styletransferapp.business.services.persistence.main.ImageHolderEntity

@@ -1,6 +1,7 @@
 package com.example.styletransferapp.representation.auth.login_screen.data
 
 import android.util.Log
+import com.example.styletransferapp.business.domain.utils.Result
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.representation.auth.login_screen.data.model.LoginPassword
 import javax.inject.Inject
@@ -26,6 +27,7 @@ class LoginRepositoryImpl : LoginRepository {
     override suspend fun login(loginPassword: LoginPassword): Result<SessionManager.SessionData> {
         val result = dataSource.login(loginPassword)
 
+        //-- actually this error should be caught in viewmodel
         if (result is Result.Error)
             Log.e(NAME, "$LOGIN_RESULT_ERROR=[${result.exception}]")
 

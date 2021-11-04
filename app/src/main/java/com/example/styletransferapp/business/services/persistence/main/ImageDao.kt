@@ -1,7 +1,6 @@
 package com.example.styletransferapp.business.services.persistence.main
 
 import androidx.room.*
-import com.example.styletransferapp.business.domain.utils.ImageDataHolder
 
 @Dao
 abstract class ImageDao {

@@ -3,6 +3,7 @@ package com.example.styletransferapp.business.interactors
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.representation.auth.login_screen.data.LoginRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -19,12 +20,11 @@ constructor(
 
     override fun execute(data: RequestType?): Flow<DataState> = flow {
         emit(DataState.Loading)
-        try {
-            repo.logout()
-        } catch (e: java.lang.Exception) {
-            emit(DataState.Error(e.message))
-            return@flow
-        }
+
+        repo.logout()
+
         emit(DataState.Success(ON_SUCCESS))
+    }.catch { e ->
+        emit(DataState.Error("Unknown error=${e.message}"))
     }
 }

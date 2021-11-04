@@ -1,6 +1,7 @@
-package com.example.styletransferapp.business.domain.utils
+package com.example.styletransferapp.business.domain.utils.main
 
 import android.graphics.Bitmap
+import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 import com.example.styletransferapp.business.interactors.BaseUseCase
 
 class ImageHolder(

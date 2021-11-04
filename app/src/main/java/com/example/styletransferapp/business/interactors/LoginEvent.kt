@@ -4,9 +4,10 @@ import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.domain.utils.SessionState
 import com.example.styletransferapp.representation.auth.login_screen.data.LoginRepository
-import com.example.styletransferapp.representation.auth.login_screen.data.Result
+import com.example.styletransferapp.business.domain.utils.Result
 import com.example.styletransferapp.representation.auth.login_screen.data.model.LoginPassword
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import java.lang.Exception
 import javax.inject.Inject
@@ -27,15 +28,14 @@ constructor(
     }
 
     override fun execute(data: LoginPassword?): Flow<DataState> = flow {
-        emit(DataState.Loading)
-
         data?.let {
+            emit(DataState.Loading)
             try {
                 val result = repo.login(it)
-                var userData: DataState.Data<SessionManager.SessionData>? = null
+                lateinit var userData: DataState.Data<SessionManager.SessionData>
 
                 when (result) {
-                    is Result.Success -> { userData = DataState.Data(result.data)}
+                    is Result.Success -> { userData = DataState.Data(result.data!!) }
                     is Result.Error -> {
                         emit(DataState.Error(result.exception.message))
                         return@flow
@@ -51,5 +51,7 @@ constructor(
             emit(DataState.Success(ON_SUCCESS))
         } ?: emit(DataState.Error(ON_LOGIN_PASSWORD_NOT_PROVIDED))
 
+    }.catch { e ->
+        emit(DataState.Error("$ON_UNKNOWN_ERROR=[${e.message}]"))
     }
 }

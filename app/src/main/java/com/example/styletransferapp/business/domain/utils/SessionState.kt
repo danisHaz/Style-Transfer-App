@@ -5,7 +5,7 @@ import com.example.styletransferapp.business.interactors.ClearCacheAndSessionEve
 sealed class SessionState {
     data class LoggedIn(val userData: SessionManager.SessionData) : SessionState()
     object LoggedOut : SessionState()
-    data class Logout(val clearCacheAndSessionEvent: ClearCacheAndSessionEvent) : SessionState()
+    object Logout : SessionState()
 
     override fun toString(): String
         = when (this) {

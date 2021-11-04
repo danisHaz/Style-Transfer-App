@@ -1,6 +1,6 @@
 package com.example.styletransferapp.business.services.network.main
 
-import com.example.styletransferapp.business.domain.utils.ImageDataHolder
+import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 import com.google.gson.annotations.SerializedName
 
 class SingleImageDataResponse(
