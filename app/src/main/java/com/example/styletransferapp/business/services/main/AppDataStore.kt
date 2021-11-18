@@ -1,4 +1,4 @@
-package com.example.styletransferapp.business.services
+package com.example.styletransferapp.business.services.main
 
 interface AppDataStore {
 

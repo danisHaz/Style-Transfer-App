@@ -1,4 +1,4 @@
-package com.example.styletransferapp.representation.auth.login_screen.data.model
+package com.example.styletransferapp.business.domain.utils.auth
 
 import android.util.Patterns
 import com.example.styletransferapp.business.interactors.BaseUseCase

@@ -1,11 +1,10 @@
 package com.example.styletransferapp.business.interactors
 
 import com.example.styletransferapp.business.domain.utils.DataState
-import com.example.styletransferapp.business.domain.utils.SessionManager
-import com.example.styletransferapp.business.domain.utils.SessionState
-import com.example.styletransferapp.representation.auth.login_screen.data.LoginRepository
+import com.example.styletransferapp.business.services.auth.LoginRepository
 import com.example.styletransferapp.business.domain.utils.Result
-import com.example.styletransferapp.representation.auth.login_screen.data.model.LoginPassword
+import com.example.styletransferapp.business.services.network.auth.responses.User
+import com.example.styletransferapp.business.domain.utils.auth.LoginPassword
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -15,8 +14,7 @@ import javax.inject.Inject
 class LoginEvent
 @Inject
 constructor(
-    private val repo: LoginRepository,
-    private val sessionManager: SessionManager,
+    private val loginRepository: LoginRepository,
 ) : BaseUseCase<LoginPassword, DataState.Data<*>>() {
     companion object {
         const val ON_SUCCESS: String = "Successful log in"
@@ -28,27 +26,23 @@ constructor(
     }
 
     override fun execute(data: LoginPassword?): Flow<DataState> = flow {
-        data?.let {
+        data?.let { loginPassword ->
             emit(DataState.Loading)
             try {
-                val result = repo.login(it)
-                lateinit var userData: DataState.Data<SessionManager.SessionData>
-
-                when (result) {
-                    is Result.Success -> { userData = DataState.Data(result.data!!) }
+                when (val result = loginRepository.login(loginPassword)) {
+                    is Result.Success -> {
+                        emit(DataState.Data<User>(result.data!!))
+                        emit(DataState.Success(ON_SUCCESS))
+                    }
                     is Result.Error -> {
-                        emit(DataState.Error(result.exception.message))
-                        return@flow
+                        emit(DataState.Error(errorCode=result.errorCode))
                     }
                 }
 
-                sessionManager.handleSessionUpdate(SessionState.LoggedIn(userData.data))
-                emit(userData)
             } catch (e: Exception) {
                 emit(DataState.Error("$ON_UNKNOWN_ERROR=[${e.message}]"))
             }
 
-            emit(DataState.Success(ON_SUCCESS))
         } ?: emit(DataState.Error(ON_LOGIN_PASSWORD_NOT_PROVIDED))
 
     }.catch { e ->

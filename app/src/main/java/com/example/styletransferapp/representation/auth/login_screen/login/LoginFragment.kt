@@ -1,27 +1,17 @@
 package com.example.styletransferapp.representation.auth.login_screen.login
 
-import android.app.Activity
-import androidx.lifecycle.Observer
 import android.os.Bundle
-import androidx.annotation.StringRes
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
 import com.example.styletransferapp.R
-import com.example.styletransferapp.representation.BaseActivity
 import com.example.styletransferapp.representation.auth.AuthActivity
 import com.example.styletransferapp.representation.auth.AuthState
-import com.example.styletransferapp.representation.auth.login_screen.data.model.LoginPassword
+import com.example.styletransferapp.business.domain.utils.auth.LoginPassword
 import com.example.styletransferapp.representation.main.BaseFragment
 
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +43,10 @@ class LoginFragment : BaseFragment() {
         login = view.findViewById(R.id.loginOrRegister)
         parentActivity = (activity as AuthActivity)
 
+        setObservers()
+
         login.setOnClickListener {
+            Log.i(NAME, "login button is clicked")
             val loginPassword = LoginPassword(
                 username.text.toString(),
                 password.text.toString()
@@ -73,7 +66,6 @@ class LoginFragment : BaseFragment() {
                 }
                 is AuthState.OnRegister -> {
                      parentActivity?.setProgressBar()
-                    // todo: transition to register screen
                 }
                 is AuthState.OnLoggedIn -> {
                     parentActivity?.hideProgressbar()
@@ -87,7 +79,10 @@ class LoginFragment : BaseFragment() {
                 // actually this branch should never be succeeded?
                 is AuthState.OnLoggedOut -> {
                     parentActivity?.hideProgressbar()
-                    Log.e(NAME, "Succeeded OnLoggedOut branch")
+                }
+                is AuthState.OnRegistered -> {
+                    parentActivity?.hideProgressbar()
+//                    parentActivity?.setSnackbar()
                 }
             }
         }

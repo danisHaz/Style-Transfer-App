@@ -9,7 +9,7 @@ sealed class SessionState {
 
     override fun toString(): String
         = when (this) {
-            is LoggedIn -> "User is logged in: userid=[${userData.userId}]"
+            is LoggedIn -> "User is logged in: username=[${userData.username}]"
             is LoggedOut -> "User is null"
             is Logout -> "User is logging out"
         }

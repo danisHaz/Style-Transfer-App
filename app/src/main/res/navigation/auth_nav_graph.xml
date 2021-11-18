@@ -12,7 +12,9 @@
             ="com.example.styletransferapp.representation.auth.login_screen.login.LoginFragment"
         android:label="Login fragment"
         tools:layout="@layout/fragment_login">
-        <action/>
+        <action
+            android:id="@+id/Fragment_login_to_itself"
+            app:destination="@id/fragment_login"/>
     </fragment>
 
 </navigation>

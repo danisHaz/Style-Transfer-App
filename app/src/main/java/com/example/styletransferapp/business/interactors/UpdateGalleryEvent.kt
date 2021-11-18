@@ -2,7 +2,7 @@ package com.example.styletransferapp.business.interactors
 
 import com.example.styletransferapp.business.domain.utils.*
 import com.example.styletransferapp.business.domain.utils.main.ImageType
-import com.example.styletransferapp.business.services.AppRepository
+import com.example.styletransferapp.business.services.main.AppRepository
 import com.example.styletransferapp.representation.main.prev_pictures_screen.UpdateGalleryEventState
 
 import kotlinx.coroutines.flow.Flow

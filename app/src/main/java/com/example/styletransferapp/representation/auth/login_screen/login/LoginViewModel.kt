@@ -3,34 +3,46 @@ package com.example.styletransferapp.representation.auth.login_screen.login
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.interactors.LoginEvent
-import com.example.styletransferapp.business.interactors.LogoutEvent
 import com.example.styletransferapp.representation.BaseViewModel
 import com.example.styletransferapp.representation.auth.AuthState
+import com.example.styletransferapp.business.domain.utils.SessionState
+import com.example.styletransferapp.business.interactors.RegistrationEvent
+import com.example.styletransferapp.business.services.network.auth.responses.User
+import com.example.styletransferapp.utils.Constants
+
+import android.util.Log
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
+import com.example.styletransferapp.utils.logUncaughtException
 
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
-@ViewModelScoped
+@HiltViewModel
 class LoginViewModel
 @Inject
 constructor(
     private val loginEvent: LoginEvent,
-    private val logoutEvent: LogoutEvent,
+    private val registrationEvent: RegistrationEvent,
     private val sessionManager: SessionManager,
 ) : BaseViewModel<AuthState>() {
+
+    companion object {
+        val NAME: String
+            = this::class.java.name
+        const val ON_INVALID_LOGOUT_ERROR: String
+            = "Trying to log out from login screen"
+        const val INVALID_REGISTRATION
+            = "Registration held from login screen"
+        const val NO_CODE_PROVIDED_ERROR: String
+            = "Null error code in response from repository"
+    }
 
     private var _sessionData: SessionManager.SessionData?
         = sessionManager.data
@@ -50,58 +62,109 @@ constructor(
         _authState.value = state
         when (state) {
             is AuthState.OnLogin -> {
-//                login(state)
-                CoroutineScope(IO).launch {
-                    delay(1000L)
-                    _authState.value = AuthState.OnLoggedIn
-                }
+                login(state)
             }
             is AuthState.OnLogout -> {
-//                logout()
-                CoroutineScope(IO).launch {
-                    delay(1000L)
-                    _authState.value = AuthState.OnLoggedOut
-                }
+                logout()
             }
             is AuthState.OnRegister -> {
                 //-- should never be changed from changeState
                 //-- used only when onlogin is failed to retrieve data
+                register(null)
             }
-            is AuthState.OnLoggedOut -> {
-                //-- todo: clear data
-            }
-            is AuthState.OnLoggedIn -> {
-                //-- ok then
-            }
+            //-- onLoggedIn, onLoggedOut
+            else -> {}
         }
     }
 
     private fun login(loginState: AuthState.OnLogin) {
-        loginEvent
-            .execute(loginState.loginPassword)
+        var needsToBeRegistered = false
+
+        loginEvent.execute(loginState.loginPassword)
             .onEach { dataState ->
                 when (dataState) {
-                    is DataState.Success -> { }
-                    is DataState.Error -> { }
-                    is DataState.Loading -> { }
-                    is DataState.Data<*> -> { }
+                    is DataState.Error -> {
+                        dataState.errorCode?.let { errorCode ->
+                            when (errorCode) {
+                                /*
+                                * todo: notify user about wrong data passed
+                                * actually should never be succeeded
+                                * */
+                                17 -> { }
+                                //-- register user if not succeeded in logging in
+                                19 -> {
+                                    needsToBeRegistered = true
+                                    //-- flow ends
+                                }
+
+                                else -> {
+                                    logUncaughtException(errorCode)
+                                }
+                            }
+                        } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
+                        changeState(AuthState.OnLoggedOut)
+                    }
+                    is DataState.Data<*> -> {
+                        sessionManager.handleSessionUpdate(
+                            SessionState.LoggedIn(
+                                (dataState.data as User).toSessionData()
+                            )
+                        )
+                    }
+                    is DataState.Success -> {
+                        changeState(AuthState.OnLoggedIn)
+                    }
+                    else -> {}
                 }
+            }.launchIn(viewModelScope)
+            .invokeOnCompletion {
+                Log.i(NAME, "login successful, continue")
+                if (needsToBeRegistered)
+                    register(AuthState.OnRegister(loginState.loginPassword))
             }
-            .launchIn(viewModelScope)
+    }
+
+    private fun register(registerState: AuthState.OnRegister?) {
+        registerState?.let {
+            registrationEvent.execute(registerState.loginPassword)
+                .onEach { dataState ->
+                    when (dataState) {
+                        is DataState.Error -> {
+                            dataState.errorCode?.let { errorCode ->
+                                when (errorCode) {
+                                    17 -> {
+                                        //-- todo: notify user about invalid data
+                                    }
+                                    /*
+                                    * This actually means that client tried to log in,
+                                    * but failed, hence tried to register -
+                                    * and succeeded!
+                                    * */
+                                    18 -> {
+                                        Log.e(NAME, Constants.errorCodes[18]!!)
+                                    }
+                                    else -> {
+                                        logUncaughtException(errorCode)
+                                    }
+                                }
+                            } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
+
+                            changeState(AuthState.OnLoggedOut)
+                        }
+                        is DataState.Success -> {
+                            changeState(AuthState.OnRegistered)
+                        }
+                        else -> {}
+                    }
+                }.launchIn(viewModelScope)
+        } ?: run {
+            changeState(AuthState.OnLoggedOut)
+            Log.e(NAME, INVALID_REGISTRATION)
+        }
     }
 
     private fun logout() {
-        logoutEvent
-            .execute()
-            .onEach { dataState ->
-                when (dataState) {
-                    is DataState.Success -> { }
-                    is DataState.Error -> { }
-                    is DataState.Loading -> { }
-                    is DataState.Data<*> -> { }
-                }
-            }
-            .launchIn(viewModelScope)
+        Log.e(NAME, ON_INVALID_LOGOUT_ERROR)
     }
 
 }

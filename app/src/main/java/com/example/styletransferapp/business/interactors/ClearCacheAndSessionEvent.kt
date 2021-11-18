@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.SessionManager
 import com.example.styletransferapp.business.domain.utils.SessionState
-import com.example.styletransferapp.business.services.AppRepository
+import com.example.styletransferapp.business.services.main.AppRepository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

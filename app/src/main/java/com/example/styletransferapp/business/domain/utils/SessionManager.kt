@@ -1,17 +1,9 @@
 package com.example.styletransferapp.business.domain.utils
 
 import com.example.styletransferapp.business.interactors.BaseUseCase
-
-import android.util.Log
+import com.example.styletransferapp.business.services.network.auth.responses.User
 
 import androidx.lifecycle.MutableLiveData
-
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SessionManager private constructor() {
 
@@ -19,11 +11,7 @@ class SessionManager private constructor() {
         val manager: SessionManager by lazy {
             SessionManager()
         }
-        const val CACHE_CLEAN_ERROR = "Clean cache error"
-        val NAME = this::class.java.name
-        const val INVALID_DATA_STATE = "Invalid data state provided"
     }
-    private val coroutineScope: CoroutineScope = CoroutineScope(IO)
 
     private val currentSessionState: MutableLiveData<SessionState>
         = MutableLiveData<SessionState>()
@@ -31,7 +19,21 @@ class SessionManager private constructor() {
     val data: SessionData?
         get() = sessionData
 
-    data class SessionData(val userId: Int) : BaseUseCase.RequestType
+    data class SessionData(
+        val userId: Int = 10,
+        val username: String,
+        val email: String,
+        val password: String,
+        val auth_token: String,
+    ): BaseUseCase.RequestType {
+
+        fun toUserInst() = User(
+            username = username,
+            email = username,
+            password = password,
+            auth_token = auth_token
+        )
+    }
 
     fun handleSessionUpdate(state: SessionState) {
         when(state) {
@@ -39,23 +41,22 @@ class SessionManager private constructor() {
                 login(state)
             }
             is SessionState.Logout -> {
-                logout(state)
+                logout()
             }
             // actually nothing happens
             is SessionState.LoggedOut -> {  }
         }
     }
 
-    private fun logout(state: SessionState.Logout) {
-        // TODO: remove ui observers on currentSessionState
-        // TODO: clear all resources as repository, cache(!)...
+    private fun logout() {
         sessionData = null
         currentSessionState.value = SessionState.LoggedOut
     }
 
+    //-- mustn't be executed in coroutine
     private fun login(state: SessionState.LoggedIn) {
         // TODO: set ui observers on currentSessionState
-        sessionData = SessionData(state.userData.userId)
+        sessionData = state.userData
         currentSessionState.value = state
     }
 }

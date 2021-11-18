@@ -1,4 +1,4 @@
-package com.example.styletransferapp.business.services
+package com.example.styletransferapp.business.services.main
 
 import android.content.Context
 import androidx.datastore.core.DataStore

@@ -1,4 +1,4 @@
-package com.example.styletransferapp.business.services
+package com.example.styletransferapp.business.services.main
 
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder

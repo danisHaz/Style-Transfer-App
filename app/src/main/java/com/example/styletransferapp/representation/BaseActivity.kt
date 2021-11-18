@@ -1,11 +1,13 @@
 package com.example.styletransferapp.representation
 
+import com.example.styletransferapp.utils.Constants
+import com.google.android.material.snackbar.Snackbar
+
 import android.content.Context
 import android.view.View
 import android.widget.Toast
+
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
-import dagger.hilt.android.AndroidEntryPoint
 
 abstract class BaseActivity : AppCompatActivity(), UiListener {
 

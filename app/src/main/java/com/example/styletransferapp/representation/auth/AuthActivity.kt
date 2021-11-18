@@ -1,13 +1,18 @@
 package com.example.styletransferapp.representation.auth
 
-import android.os.Bundle
-import android.widget.ProgressBar
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import com.example.styletransferapp.R
 import com.example.styletransferapp.representation.BaseActivity
 import com.google.android.material.appbar.MaterialToolbar
 
+import android.os.Bundle
+import android.widget.ProgressBar
+
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+
+import dagger.hilt.android.AndroidEntryPoint
+
+@AndroidEntryPoint
 class AuthActivity : BaseActivity() {
 
     private lateinit var toolbar: MaterialToolbar
@@ -27,7 +32,7 @@ class AuthActivity : BaseActivity() {
     }
 
     private fun setToolbar() {
-        toolbar = findViewById(R.id.main_toolbar)
+        toolbar = findViewById(R.id.auth_toolbar)
         setSupportActionBar(toolbar)
         //-- TODO: set function to support back buttons with navigation
     }
@@ -37,6 +42,6 @@ class AuthActivity : BaseActivity() {
     }
 
     override fun hideProgressbar() {
-        progressBar.visibility = ProgressBar.INVISIBLE
+        progressBar.visibility = ProgressBar.GONE
     }
 }

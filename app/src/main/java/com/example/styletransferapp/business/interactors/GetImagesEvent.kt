@@ -2,7 +2,7 @@ package com.example.styletransferapp.business.interactors
 
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.domain.utils.SessionManager
-import com.example.styletransferapp.business.services.AppRepository
+import com.example.styletransferapp.business.services.main.AppRepository
 import com.example.styletransferapp.business.domain.utils.main.ImageDataHolder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
