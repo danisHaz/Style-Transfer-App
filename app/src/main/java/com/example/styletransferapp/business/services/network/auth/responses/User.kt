@@ -8,7 +8,7 @@ data class User(
     val username: String,
     @SerializedName("email")
     val email: String,
-    @SerializedName("password_hashed")
+    @SerializedName("password")
     val password: String,
     @SerializedName("auth_token")
     val auth_token: String?

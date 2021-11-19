@@ -31,7 +31,7 @@ class SessionManager private constructor() {
             username = username,
             email = username,
             password = password,
-            auth_token = auth_token
+            auth_token = auth_token,
         )
     }
 

@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class LoginViewModel
@@ -40,6 +41,8 @@ constructor(
             = "Trying to log out from login screen"
         const val INVALID_REGISTRATION
             = "Registration held from login screen"
+        const val UNKNOWN_EXCEPTION: String
+            = "Unknown error is thrown"
         const val NO_CODE_PROVIDED_ERROR: String
             = "Null error code in response from repository"
     }
@@ -69,7 +72,7 @@ constructor(
             }
             is AuthState.OnRegister -> {
                 //-- should never be changed from changeState
-                //-- used only when onlogin is failed to retrieve data
+                //-- used only when onLogin() is failed to retrieve data
                 register(null)
             }
             //-- onLoggedIn, onLoggedOut
@@ -79,30 +82,31 @@ constructor(
 
     private fun login(loginState: AuthState.OnLogin) {
         var needsToBeRegistered = false
+        var err: String? = null
 
         loginEvent.execute(loginState.loginPassword)
             .onEach { dataState ->
                 when (dataState) {
                     is DataState.Error -> {
+                        var reason: String? = null
                         dataState.errorCode?.let { errorCode ->
+
+                            reason = Constants.errorCodes[errorCode]
                             when (errorCode) {
-                                /*
-                                * todo: notify user about wrong data passed
-                                * actually should never be succeeded
-                                * */
-                                17 -> { }
                                 //-- register user if not succeeded in logging in
                                 19 -> {
                                     needsToBeRegistered = true
-                                    //-- flow ends
                                 }
 
                                 else -> {
                                     logUncaughtException(errorCode)
+                                    if (reason == null)
+                                        reason = UNKNOWN_EXCEPTION
                                 }
                             }
                         } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
-                        changeState(AuthState.OnLoggedOut)
+                        //-- throw CancellationException(reason)
+                        err = reason
                     }
                     is DataState.Data<*> -> {
                         sessionManager.handleSessionUpdate(
@@ -118,9 +122,16 @@ constructor(
                 }
             }.launchIn(viewModelScope)
             .invokeOnCompletion {
-                Log.i(NAME, "login successful, continue")
-                if (needsToBeRegistered)
-                    register(AuthState.OnRegister(loginState.loginPassword))
+                when {
+                    needsToBeRegistered -> {
+                        register(AuthState.OnRegister(loginState.loginPassword))
+                    }
+                    err == null -> changeState(AuthState.OnLoggedIn)
+
+                    else -> {
+                        changeState(AuthState.OnError(err))
+                    }
+                }
             }
     }
 
@@ -131,22 +142,9 @@ constructor(
                     when (dataState) {
                         is DataState.Error -> {
                             dataState.errorCode?.let { errorCode ->
-                                when (errorCode) {
-                                    17 -> {
-                                        //-- todo: notify user about invalid data
-                                    }
-                                    /*
-                                    * This actually means that client tried to log in,
-                                    * but failed, hence tried to register -
-                                    * and succeeded!
-                                    * */
-                                    18 -> {
-                                        Log.e(NAME, Constants.errorCodes[18]!!)
-                                    }
-                                    else -> {
-                                        logUncaughtException(errorCode)
-                                    }
-                                }
+                                changeState(
+                                    AuthState.OnError(Constants.errorCodes[errorCode])
+                                )
                             } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
 
                             changeState(AuthState.OnLoggedOut)
@@ -158,7 +156,7 @@ constructor(
                     }
                 }.launchIn(viewModelScope)
         } ?: run {
-            changeState(AuthState.OnLoggedOut)
+            changeState(AuthState.OnError(INVALID_REGISTRATION))
             Log.e(NAME, INVALID_REGISTRATION)
         }
     }

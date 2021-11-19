@@ -10,4 +10,5 @@ sealed class AuthState : BaseState {
     object OnLoggedIn : AuthState()
     object OnLogout : AuthState()
     object OnLoggedOut : AuthState()
+    data class OnError(val message: String?) : AuthState()
 }

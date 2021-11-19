@@ -1,5 +1,6 @@
 package com.example.styletransferapp.business.interactors
 
+import android.util.Log
 import com.example.styletransferapp.business.domain.utils.DataState
 import com.example.styletransferapp.business.services.auth.LoginRepository
 import com.example.styletransferapp.business.domain.utils.Result
@@ -17,6 +18,7 @@ constructor(
     private val loginRepository: LoginRepository,
 ) : BaseUseCase<LoginPassword, DataState.Data<*>>() {
     companion object {
+        val NAME = this::class.java.name
         const val ON_SUCCESS: String = "Successful log in"
         const val ON_LOGIN_PASSWORD_NOT_PROVIDED
             = "Login and password not provided"

@@ -69,6 +69,11 @@ class LoginFragment : BaseFragment() {
                 }
                 is AuthState.OnLoggedIn -> {
                     parentActivity?.hideProgressbar()
+                    parentActivity?.setSnackbar(
+                        login,
+                        resources.getString(R.string.login_success),
+                        null, null
+                    )
                     // TODO: transition to main nav graph
                 }
                 // actually this branch should never be succeeded
@@ -82,7 +87,19 @@ class LoginFragment : BaseFragment() {
                 }
                 is AuthState.OnRegistered -> {
                     parentActivity?.hideProgressbar()
-//                    parentActivity?.setSnackbar()
+                    parentActivity?.setSnackbar(
+                        login,
+                        resources.getString(R.string.register_success),
+                        null, null,
+                    )
+                }
+                is AuthState.OnError -> {
+                    parentActivity?.hideProgressbar()
+                    parentActivity?.setSnackbar(
+                        login,
+                        authState.message ?: resources.getString(R.string.login_failed),
+                        null, null,
+                    )
                 }
             }
         }
