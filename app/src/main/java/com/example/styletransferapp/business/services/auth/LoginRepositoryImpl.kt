@@ -1,17 +1,15 @@
 package com.example.styletransferapp.business.services.auth
 
-import android.util.Log
 import com.example.styletransferapp.business.domain.utils.Result
 import com.example.styletransferapp.business.services.network.GenericResponse
 import com.example.styletransferapp.business.services.network.auth.AuthService
 import com.example.styletransferapp.business.services.network.auth.responses.User
 import com.example.styletransferapp.business.domain.utils.auth.LoginPassword
-import com.example.styletransferapp.utils.Constants.errorCodes
+import com.example.styletransferapp.utils.Constants.errorReason
 import com.example.styletransferapp.utils.logUncaughtException
 import retrofit2.await
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.log
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -46,8 +44,8 @@ constructor(
 
         response.errorCode?.let { code ->
             return Result.Error(java.lang.Exception(
-                errorCodes[code] ?: logUncaughtException(code)
-            ))
+                errorReason[code] ?: logUncaughtException(code)
+            ), errorCode=code)
         }
 
         return Result.Success(response.data)
@@ -68,8 +66,8 @@ constructor(
 
         response.errorCode?.let { code ->
             return Result.Error(java.lang.Exception(
-                errorCodes[code] ?: logUncaughtException(code)
-            ))
+                errorReason[code] ?: logUncaughtException(code)
+            ), errorCode=code)
         }
 
         return Result.Success(response.data)
@@ -90,7 +88,7 @@ constructor(
 
         response.errorCode?.let { code ->
             return Result.Error(java.lang.Exception(
-                errorCodes[code] ?: logUncaughtException(code)
+                errorReason[code] ?: logUncaughtException(code)
             ), code)
         }
         return Result.Success(response.data)

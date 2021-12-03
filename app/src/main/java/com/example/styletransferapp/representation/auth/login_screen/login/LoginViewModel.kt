@@ -15,6 +15,8 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewModelScope
+import com.example.styletransferapp.business.interactors.EventResult
+import com.example.styletransferapp.business.interactors.GenericData
 import com.example.styletransferapp.utils.logUncaughtException
 
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,7 +25,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class LoginViewModel
@@ -45,6 +46,13 @@ constructor(
             = "Unknown error is thrown"
         const val NO_CODE_PROVIDED_ERROR: String
             = "Null error code in response from repository"
+
+        //-- event related info
+        const val needsToBeRegistered: String
+            = "needs_to_be_registered"
+
+        const val errorReason: String
+            = "error_reason"
     }
 
     private var _sessionData: SessionManager.SessionData?
@@ -81,58 +89,52 @@ constructor(
     }
 
     private fun login(loginState: AuthState.OnLogin) {
-        var needsToBeRegistered = false
-        var err: String? = null
+        val eResult = EventResult<GenericData<*>>()
 
-        loginEvent.execute(loginState.loginPassword)
-            .onEach { dataState ->
-                when (dataState) {
-                    is DataState.Error -> {
-                        var reason: String? = null
-                        dataState.errorCode?.let { errorCode ->
-
-                            reason = Constants.errorCodes[errorCode]
-                            when (errorCode) {
-                                //-- register user if not succeeded in logging in
-                                19 -> {
-                                    needsToBeRegistered = true
-                                }
-
-                                else -> {
-                                    logUncaughtException(errorCode)
-                                    if (reason == null)
-                                        reason = UNKNOWN_EXCEPTION
-                                }
+        loginEvent.execute(loginState.loginPassword).onEach { dataState ->
+            when (dataState) {
+                is DataState.Error -> {
+                    dataState.errorCode?.let { errorCode ->
+                        eResult.addData(errorReason, Constants.errorReason[errorCode])
+                        when (errorCode) {
+                            //-- register user if not succeeded in logging in
+                            19 -> eResult.addData(needsToBeRegistered, true)
+                            else -> {
+                                logUncaughtException(errorCode)
                             }
-                        } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
-                        //-- throw CancellationException(reason)
-                        err = reason
-                    }
-                    is DataState.Data<*> -> {
-                        sessionManager.handleSessionUpdate(
-                            SessionState.LoggedIn(
-                                (dataState.data as User).toSessionData()
-                            )
-                        )
-                    }
-                    is DataState.Success -> {
-                        changeState(AuthState.OnLoggedIn)
-                    }
-                    else -> {}
-                }
-            }.launchIn(viewModelScope)
-            .invokeOnCompletion {
-                when {
-                    needsToBeRegistered -> {
-                        register(AuthState.OnRegister(loginState.loginPassword))
-                    }
-                    err == null -> changeState(AuthState.OnLoggedIn)
+                        }
+                    } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
+                    if (eResult.getDataByKey<String>(errorReason) == null)
+                        eResult.addData(errorReason, UNKNOWN_EXCEPTION)
 
-                    else -> {
-                        changeState(AuthState.OnError(err))
-                    }
+                    //-- throw CancellationException(reason)
                 }
+                is DataState.Data<*> -> {
+                    sessionManager.handleSessionUpdate(
+                        SessionState.LoggedIn(
+                            (dataState.data as User).toSessionData()
+                        )
+                    )
+                }
+                is DataState.Success -> {
+                    changeState(AuthState.OnLoggedIn)
+                }
+                else -> {}
             }
+        }.launchIn(viewModelScope)
+        .invokeOnCompletion {
+            when {
+                eResult.getDataByKey<String>(needsToBeRegistered) != null ->
+                    register(AuthState.OnRegister(loginState.loginPassword))
+                eResult.getDataByKey<String>(errorReason) == null ->
+                    changeState(AuthState.OnLoggedIn)
+
+                else ->
+                    changeState(
+                        AuthState.OnError(eResult.getDataByKey(errorReason))
+                    )
+            }
+        }
     }
 
     private fun register(registerState: AuthState.OnRegister?) {
@@ -143,7 +145,7 @@ constructor(
                         is DataState.Error -> {
                             dataState.errorCode?.let { errorCode ->
                                 changeState(
-                                    AuthState.OnError(Constants.errorCodes[errorCode])
+                                    AuthState.OnError(Constants.errorReason[errorCode])
                                 )
                             } ?: Log.e(NAME, NO_CODE_PROVIDED_ERROR)
 

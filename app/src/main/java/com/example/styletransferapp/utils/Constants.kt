@@ -7,7 +7,7 @@ object Constants {
     const val PLEASE_TRY_AGAIN_MESSAGE: String
         = "Please try again later"
 
-    val errorCodes: Map<Int, String> = mapOf(
+    val errorReason: Map<Int, String> = mapOf(
         16 to "Wrong query to database",
         17 to "Invalid data passed to body",
         18 to "User is already registered",
