@@ -43,11 +43,19 @@ object AppModule {
     fun provideSessionManager(): SessionManager
         = SessionManager.manager
 
-    @Singleton
+    @RetrofitBaseUrl
     @Provides
     fun provideRetrofit(gson: Gson): Retrofit
         = Retrofit.Builder()
         .baseUrl(Constants.baseUrl)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    @RetrofitApiUrl
+    @Provides
+    fun provideRetrofitApi(gson: Gson): Retrofit
+        = Retrofit.Builder()
+        .baseUrl(Constants.ApiUrl)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 

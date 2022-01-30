@@ -4,12 +4,12 @@
         android:id="@+id/bottom_navigation_gallery_item"
         android:enabled="true"
         android:icon="@drawable/ic_round_gallery_36"
-        android:title="@string/bottom_navigation_gallery_item_name" />
+        android:title="@string/gallery_item_name" />
 
     <item
         android:id="@+id/bottom_navigation_account_item"
         android:enabled="true"
         android:icon="@drawable/ic_round_account_36"
-        android:title="@string/bottom_navigation_account_item_name"/>
+        android:title="@string/account_item_name"/>
 
 </menu>

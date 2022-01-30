@@ -18,6 +18,31 @@
         <include layout="@layout/toolbar_main"/>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/main_nav_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/gallery_tab"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/gallery_item_name"
+            android:icon="@drawable/ic_round_gallery_36"
+            android:textSize="20sp"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/account_tab"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/account_item_name"
+            android:icon="@drawable/ic_round_account_36"
+            android:textSize="20sp"/>
+
+    </com.google.android.material.tabs.TabLayout>
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/main_fragment_container"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -28,16 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_nav_graph"/>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu" />
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progress_bar"

@@ -60,6 +60,7 @@ class LoginFragment : BaseFragment() {
 
     private fun setObservers() {
         loginViewModel.setAuthStateObserver(this) { authState ->
+
             when (authState) {
                 is AuthState.OnLogin -> {
                     parentActivity?.setProgressBar()
@@ -103,7 +104,6 @@ class LoginFragment : BaseFragment() {
                 }
             }
         }
-
     }
 
 }

@@ -105,6 +105,9 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     implementation "androidx.navigation:navigation-runtime:$nav_version"
 
+    //-- okhttp3
+    def okhttp_version="3.14.6"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
 
     //-- glide
     def glide_version = "4.12.0"

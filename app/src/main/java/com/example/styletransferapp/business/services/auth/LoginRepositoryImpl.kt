@@ -7,7 +7,9 @@ import com.example.styletransferapp.business.services.network.auth.responses.Use
 import com.example.styletransferapp.business.domain.utils.auth.LoginPassword
 import com.example.styletransferapp.utils.Constants.errorReason
 import com.example.styletransferapp.utils.logUncaughtException
+
 import retrofit2.await
+
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,7 +35,7 @@ constructor(
             username=loginPassword.username,
             email=loginPassword.username,
             password=loginPassword.password,
-            auth_token=null
+            auth_token=null,
         )
 
         val response: GenericResponse<Any?> = authService
@@ -56,7 +58,7 @@ constructor(
             username=loginPassword.username,
             email=loginPassword.username,
             password=loginPassword.password,
-            auth_token=null
+            auth_token=null,
         )
 
         val response: GenericResponse<Any?> = authService

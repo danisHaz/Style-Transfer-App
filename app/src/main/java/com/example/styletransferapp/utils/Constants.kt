@@ -4,6 +4,7 @@ import android.util.Log
 
 object Constants {
     const val baseUrl: String = "http://192.168.43.241:5000"
+    const val ApiUrl: String = "https://cataas.com"
     const val PLEASE_TRY_AGAIN_MESSAGE: String
         = "Please try again later"
 

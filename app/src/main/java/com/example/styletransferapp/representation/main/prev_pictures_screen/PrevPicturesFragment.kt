@@ -27,7 +27,6 @@ import java.lang.NullPointerException
 
 @AndroidEntryPoint
 class PrevPicturesFragment : BaseFragment() {
-
     companion object {
         val NAME = this::class.java.name
     }
@@ -53,15 +52,6 @@ class PrevPicturesFragment : BaseFragment() {
         parentActivity = (activity as MainActivity)
         recyclerView = view.findViewById(R.id.gallery_recycler_view)
 
-        try {
-            galleryManager = RecyclerViewManager(
-                recyclerView,
-                GalleryRecyclerViewAdapter(viewModel, SessionManager.manager, requireContext()),
-                LinearLayoutManager(requireContext())
-            )
-        } catch (e: NullPointerException) {
-            Log.e(NAME, "${e.message}")
-        }
         swipeRefreshLayout = view.findViewById(R.id.prev_pictures_refresher)
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.changeState(PrevPicturesState.OnGalleryLoading)
@@ -69,6 +59,21 @@ class PrevPicturesFragment : BaseFragment() {
         }
 
         subscribeObservers(view)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        try {
+            galleryManager = RecyclerViewManager(
+                recyclerView,
+                GalleryRecyclerViewAdapter(viewModel, SessionManager.manager, requireContext()),
+                LinearLayoutManager(requireContext())
+            )
+
+            galleryManager.build()
+        } catch (e: NullPointerException) {
+            Log.e(NAME, "${e.message}")
+        }
     }
 
     private fun subscribeObservers(view: View) {
@@ -82,9 +87,14 @@ class PrevPicturesFragment : BaseFragment() {
                         view, state.message, null, null
                     )
                     swipeRefreshLayout.isRefreshing = false
-                    swipeRefreshLayout.isEnabled = false
+                    //-- swipeRefreshLayout.isEnabled = false // this is the case when we can
+                    //-- try to reload our app
                 }
-                is PrevPicturesState.OnGalleryShown -> showGallery()
+                is PrevPicturesState.OnGalleryShown -> {
+                    showGallery()
+                    //-- gallery loading completed
+                    swipeRefreshLayout.isRefreshing = false
+                }
                 is PrevPicturesState.OnGalleryUpdate -> {}
             }
         }
@@ -94,15 +104,16 @@ class PrevPicturesFragment : BaseFragment() {
         galleryManager.changeState(
             RecyclerViewState.OnShow
         )
-
-        //-- gallery loading completed
-        swipeRefreshLayout.isRefreshing = false
         viewModel.changeState(PrevPicturesState.OnGalleryShown)
     }
 
-    override fun onDetach() {
+    override fun onStop() {
         galleryManager.changeState(RecyclerViewState.OnDestroy)
+        super.onStop()
+    }
+
+    override fun onDestroy() {
         parentActivity = null
-        super.onDetach()
+        super.onDestroy()
     }
 }

@@ -14,6 +14,7 @@ import android.util.Log
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.styletransferapp.business.interactors.EventResult
 import com.example.styletransferapp.business.interactors.GenericData
@@ -55,13 +56,10 @@ constructor(
             = "error_reason"
     }
 
-    private var _sessionData: SessionManager.SessionData?
-        = sessionManager.data
+    private val _authState: MutableLiveData<AuthState> by lazy {
+        MutableLiveData(AuthState.OnLoggedOut)
+    }
 
-    val sessionData: SessionManager.SessionData?
-        get() = _sessionData
-    private var _authState: MutableLiveData<AuthState>
-        = MutableLiveData()
     val authState: AuthState
         get() = _authState.value!!
 

@@ -37,7 +37,9 @@ constructor(
     val currentState: MutableLiveData<PrevPicturesState>
         = MutableLiveData()
 
-    private suspend fun MutableLiveData<PrevPicturesState>.changeState(state: PrevPicturesState) {
+    private suspend fun MutableLiveData<PrevPicturesState>.changeState(
+        state: PrevPicturesState
+    ) {
         withContext(Dispatchers.Main) {
             this@changeState.value = state
         }
